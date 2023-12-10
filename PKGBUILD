@@ -8,11 +8,12 @@ license=('custom:ICS')
 provides=('idlehack')
 source=("$pkgname::git+https://github.com/loops/idlehack.git")
 sha256sums=('SKIP')
+depends=('libx11')
 
 pkgver() {
-    cd "idlehack-git" || return 1
-    rev="$(git rev-list --count HEAD)"
-    echo -n "0.r${rev}"
+  cd "idlehack-git" || return 1
+  rev="$(git rev-list --count HEAD)"
+  echo -n "0.r${rev}"
 }
 
 build() {
