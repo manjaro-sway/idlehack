@@ -1,8 +1,8 @@
 pkgname=idlehack
 pkgver=0.r4
-pkgrel=3
+pkgrel=4
 pkgdesc="Monitor dbus and inhibit swayidle when Firefox or Chromium request it "
-arch=('i686' 'x86_64')
+arch=('i686' 'x86_64' 'aarch64')
 url="https://github.com/loops/idlehack"
 license=('custom:ICS')
 provides=('idlehack' 'idlehack-git')
