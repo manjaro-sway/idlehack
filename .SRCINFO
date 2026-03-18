@@ -1,7 +1,7 @@
 pkgbase = idlehack-git
 	pkgdesc = Monitor dbus and inhibit swayidle when Firefox or Chromium request it
 	pkgver = 0.r4
-	pkgrel = 2
+	pkgrel = 4
 	url = https://github.com/loops/idlehack
 	arch = i686
 	arch = x86_64
