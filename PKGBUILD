@@ -1,7 +1,7 @@
 pkgname=idlehack
-pkgver=0.r4
-pkgrel=4
-pkgdesc="Monitor dbus and inhibit swayidle when Firefox or Chromium request it "
+pkgver=0.r19
+pkgrel=1
+pkgdesc="Monitor dbus and inhibit swayidle when Firefox or Chromium request it"
 arch=('i686' 'x86_64' 'aarch64')
 url="https://github.com/loops/idlehack"
 license=('custom:ICS')
@@ -10,30 +10,28 @@ conflicts=('idlehack-git')
 _commit="fd73c76c2d289f9eb9ad9b0695fa9e9f151be22f"
 source=("$pkgname::git+https://github.com/loops/idlehack.git#commit=$_commit")
 sha256sums=('SKIP')
-depends=('libx11')
-makedepends=('git')
+depends=('libx11' 'dbus' 'systemd-libs')
+makedepends=('git' 'cmake' 'pkgconf')
 
 pkgver() {
-  cd "$pkgname" || return 1
-  rev="$(git rev-list --count HEAD)"
-  echo -n "0.r${rev}"
+    cd "$pkgname" || return 1
+    printf "0.r%s" "$(git rev-list --count HEAD)"
 }
 
 build() {
-  cd "$srcdir/$pkgname" || return 1
-
-  make || return 1
-
-  sed -i 's/libexec/bin/' idlehack.service
+    cmake -B build -S "$srcdir/$pkgname" \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCMAKE_INSTALL_LIBEXECDIR=bin
+    cmake --build build
 }
 
 package() {
-  cd "$srcdir/$pkgname" || return 1
+    DESTDIR="$pkgdir" cmake --install build
 
-  mkdir -p "$pkgdir/usr/bin"
-  cp idlehack "$pkgdir/usr/bin/"
-  cp swayidle-inhibit "$pkgdir/usr/bin/"
-
-  mkdir -p "$pkgdir/usr/lib/systemd/user"
-  cp idlehack.service "$pkgdir/usr/lib/systemd/user/"
+    # Move service file to the correct Arch Linux location
+    install -dm755 "$pkgdir/usr/lib/systemd/user"
+    mv "$pkgdir/etc/systemd/user/idlehack.service" \
+        "$pkgdir/usr/lib/systemd/user/"
+    rmdir --ignore-fail-on-non-empty -p "$pkgdir/etc/systemd/user"
 }
